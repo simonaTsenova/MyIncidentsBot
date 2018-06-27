@@ -15,7 +15,7 @@ namespace MyIncidentsBot
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => RootDialog.dialog);
+                await Conversation.SendAsync(activity, () => new LUISDialog());
             }
             else
             {
