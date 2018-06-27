@@ -1,0 +1,42 @@
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Bot Application.dll.config
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Bot Application.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Bot Application.pdb
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Autofac.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Chronic.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Bot.Builder.Autofac.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Bot.Builder.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Bot.Connector.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.IdentityModel.Protocol.Extensions.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Rest.ClientRuntime.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.WindowsAzure.Configuration.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Newtonsoft.Json.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.Net.Http.Formatting.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.Web.Http.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.Web.Http.WebHost.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Autofac.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Bot.Builder.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Bot.Builder.Autofac.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.Bot.Connector.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.IdentityModel.Protocol.Extensions.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Microsoft.WindowsAzure.Configuration.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\Newtonsoft.Json.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.IdentityModel.Tokens.Jwt.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.Net.Http.Formatting.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.Web.Http.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\System.Web.Http.WebHost.xml
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\ar\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\cs\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\de-dE\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\en\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\es\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\fa\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\fr\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\ja\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\ru\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\bin\zh-hans\Microsoft.Bot.Builder.resources.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\obj\Debug\MyIncidentsBot.csprojAssemblyReference.cache
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\obj\Debug\MyIncidentsBot.csproj.CoreCompileInputs.cache
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\obj\Debug\MyIncidentsBot.csproj.CopyComplete
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\obj\Debug\Bot Application.dll
+C:\Users\simona.tsenova\source\Workspaces\MyIncidentsBot\MyIncidentsBot\obj\Debug\Bot Application.pdb
