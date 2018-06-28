@@ -119,7 +119,6 @@
     </Compile>
     <Compile Include="Models\Enums\UrgencyType.cs" />
     <Compile Include="Models\Incident.cs" />
-    <Compile Include="Models\IncidentForm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

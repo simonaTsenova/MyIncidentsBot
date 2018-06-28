@@ -29,7 +29,7 @@ namespace MyIncidentsBot.Dialogs
             {
                 await context.PostAsync("Ok, you will need to provide some details to create an incident.");
 
-                var incidentForm = (IDialog<IncidentForm>)FormDialog.FromForm(IncidentForm.BuildForm, FormOptions.PromptInStart);
+                var incidentForm = (IDialog<Incident>)FormDialog.FromForm(Incident.BuildForm, FormOptions.PromptInStart);
                 context.Call(incidentForm, OnCreateIncidentComplete);
             }
             catch
@@ -96,7 +96,7 @@ namespace MyIncidentsBot.Dialogs
             context.Wait(MessageReceived);
         }
 
-        private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<IncidentForm> result)
+        private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<Incident> result)
         {
             // TODO Send created incident to service now
             var incident = await result;
