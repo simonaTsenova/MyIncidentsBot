@@ -29,7 +29,7 @@ namespace MyIncidentsBot.Dialogs
             {
                 await context.PostAsync("Ok, you will need to provide some details to create an incident.");
 
-                var incidentForm = (IDialog<Incident>)FormDialog.FromForm(Incident.BuildForm, FormOptions.PromptInStart);
+                var incidentForm = (IDialog<IncidentForm>)FormDialog.FromForm(IncidentForm.BuildForm, FormOptions.PromptInStart);
                 context.Call(incidentForm, OnCreateIncidentComplete);
             }
             catch
@@ -44,8 +44,8 @@ namespace MyIncidentsBot.Dialogs
         {
             var incidents = new List<Incident>
             {
-                new Incident() { ID = "1", Urgency = UrgencyType.Medium, Description = "Node is down" },
-                new Incident() { ID = "2", Urgency = UrgencyType.Low, Description = "Button disabled" }
+                new Incident() { ID = "INC0019503", Urgency = UrgencyType.Medium, Description = "Node is down" },
+                new Incident() { ID = "INC0019504", Urgency = UrgencyType.Low, Description = "Button disabled" }
             };
 
             await context.PostAsync("Here are your incidents:");
@@ -65,14 +65,14 @@ namespace MyIncidentsBot.Dialogs
         {
             var incidents = new List<Incident>
             {
-                new Incident() { ID = "1", Urgency = UrgencyType.Medium, Description = "Node is down", State = "In progress" },
-                new Incident() { ID = "2", Urgency = UrgencyType.Low, Description = "Button disabled", State = "Closed" }
+                new Incident() { ID = "INC0019503", Urgency = UrgencyType.Medium, Description = "Node is down", State = "In progress" },
+                new Incident() { ID = "INC0019504", Urgency = UrgencyType.Low, Description = "Button disabled", State = "Closed" }
             };
 
             var incidentId = string.Empty;
             if (result.Entities.Count > 0)
             {
-                incidentId = result.Entities.FirstOrDefault(e => e.Type == "builtin.number").Entity;
+                incidentId = result.Entities.FirstOrDefault(e => e.Type == "ID").Entity;
             }
 
             if (string.IsNullOrEmpty(incidentId))
@@ -81,7 +81,7 @@ namespace MyIncidentsBot.Dialogs
             }
             else
             {
-                var incident = incidents.Where(i => i.ID == incidentId).FirstOrDefault();
+                var incident = incidents.Where(i => i.ID.ToLower() == incidentId.ToLower()).FirstOrDefault();
 
                 if (incident == null)
                 {
@@ -96,7 +96,7 @@ namespace MyIncidentsBot.Dialogs
             context.Wait(MessageReceived);
         }
 
-        private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<Incident> result)
+        private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<IncidentForm> result)
         {
             // TODO Send created incident to service now
             var incident = await result;
