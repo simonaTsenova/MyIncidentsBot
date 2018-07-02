@@ -75,7 +75,7 @@ namespace MyIncidentsBot.Dialogs
                 PromptDialog.Text(
                     context: context, 
                     resume: OnIncidentIdPromptComplete, 
-                    prompt: "What's the ID of the incident you want me to check?", 
+                    prompt: "What's the ID of the incident you want me to check?",
                     retry: "Sorry, I didn't understant that. Please try again.");
             }
             else
@@ -120,16 +120,17 @@ namespace MyIncidentsBot.Dialogs
 
                 if (incident == null)
                 {
-                    await context.PostAsync($"No incident with Id {incidentId} has been found.");
+                    await context.PostAsync($"No incident with Id '{incidentId}' has been found.");
                 }
                 else
                 {
-                    await context.PostAsync($"Incident with Id {incidentId} is {incident.State}.");
+                    await context.PostAsync($"Incident with Id '{incidentId}' is {incident.State}.");
                 }
             }
             else
             {
-                await context.PostAsync("I'm sorry but you should provide valid incident ID.");
+                // check if result is valid intent
+                await context.PostAsync("I'm sorry but I couldn't find incident.");
             }
             
             context.Wait(MessageReceived);
