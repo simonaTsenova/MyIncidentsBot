@@ -129,11 +129,13 @@ namespace MyIncidentsBot.Dialogs
             }
             else
             {
-                // check if result is valid intent
-                await context.PostAsync("I'm sorry but I couldn't find incident.");
+                //IMessageActivity res = context.MakeMessage();
+                //res.Text = incidentId;
+
+                await base.MessageReceived(context, Awaitable.FromItem(context.Activity.AsMessageActivity()));
+
+                //await base.MessageReceived(context, );
             }
-            
-            context.Wait(MessageReceived);
         }
     }
 }
