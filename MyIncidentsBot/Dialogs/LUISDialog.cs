@@ -3,9 +3,8 @@ using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using MyIncidentsBot.Models;
-using MyIncidentsBot.Models.Enums;
+using MyIncidentsBot.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,12 +15,6 @@ namespace MyIncidentsBot.Dialogs
     [Serializable]
     public class LUISDialog : LuisDialog<object>
     {
-        private readonly IList<Incident> incidents = new List<Incident>()
-        {
-            new Incident() { ID = "INC0019503", Urgency = UrgencyType.Medium, Description = "Node is down", State = "In progress" },
-            new Incident() { ID = "INC0019504", Urgency = UrgencyType.Low, Description = "Button disabled", State = "Closed" }
-        };
-
         [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
         {
@@ -36,7 +29,7 @@ namespace MyIncidentsBot.Dialogs
             {
                 await context.PostAsync("Ok, you will need to provide some details to create an incident.");
 
-                var incidentForm = (IDialog<Incident>)FormDialog.FromForm(Incident.BuildForm, FormOptions.PromptInStart);
+                var incidentForm = (IDialog<IncidentForm>)FormDialog.FromForm(IncidentForm.BuildForm, FormOptions.PromptInStart);
                 context.Call(incidentForm, OnCreateIncidentComplete);
             }
             catch
@@ -49,15 +42,30 @@ namespace MyIncidentsBot.Dialogs
         [LuisIntent("GetAllIncidents")]
         public async Task GetAllIncidents(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("Here are your incidents:");
-            string incidentsReply = string.Empty;
-            var incidentsCount = this.incidents.Count;
-            for (int i = 0; i < incidentsCount; i++)
-            {
-                incidentsReply += $"{i}: INCIDENT: {incidents[i].Description}, URGENCY: {incidents[i].Urgency} \n";
-            }
+        }
 
-            await context.PostAsync(incidentsReply);
+        [LuisIntent("GetLatestIncidents")]
+        public async Task GetLatestIncidents(IDialogContext context, LuisResult result)
+        {
+            string incidentsReply = string.Empty;
+            var incidentsService = new IncidentsService();
+            var incidents = await incidentsService.GetLatestIncidents();
+            var incidentsCount = incidents.Count;
+            if (incidentsCount > 0)
+            {
+                for (int i = 0; i < incidentsCount; i++)
+                {
+                    incidentsReply += $"**{i+1}**: **ID**: {incidents[i].Number}, **DESCRIPTION**: {incidents[i].Short_Description}, **URGENCY**: {incidents[i].Urgency}, **STATE**: {incidents[i].State} \n";
+                }
+
+                await context.PostAsync("Here are latest incidents:");
+                await context.PostAsync(incidentsReply);
+            }
+            else
+            {
+                await context.PostAsync("Sorry, didn't find any incidents.");
+            }
+            
             context.Wait(MessageReceived);
         }
 
@@ -73,38 +81,40 @@ namespace MyIncidentsBot.Dialogs
             if (string.IsNullOrEmpty(incidentId))
             {
                 PromptDialog.Text(
-                    context: context, 
-                    resume: OnIncidentIdPromptComplete, 
+                    context: context,
+                    resume: OnIncidentIdPromptComplete,
                     prompt: "What's the ID of the incident you want me to check?",
                     retry: "Sorry, I didn't understant that. Please try again.");
             }
             else
             {
                 // Get incident
-                var incident = this.incidents.Where(i => i.ID.ToLower() == incidentId.ToLower()).FirstOrDefault();
+                var incidentsService = new IncidentsService();
+                var incident = await incidentsService.GetIncidentById(incidentId);
 
                 if (incident == null)
                 {
-                    await context.PostAsync($"No incident with Id {incidentId} has been found.");
+                    await context.PostAsync($"No incident with Id **{incidentId}** has been found.");
                 }
                 else
                 {
-                    await context.PostAsync($"Incident with Id {incidentId} is {incident.State}.");
+                    await context.PostAsync($"State of incident with Id **{incidentId}** is **{incident.State}**.");
                 }
             }
 
             //context.Wait(MessageReceived);
         }
 
-        private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<Incident> result)
+        private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<IncidentForm> result)
         {
             try
             {
-                // TODO Send created incident to service now
                 var incident = await result;
 
-                await context.PostAsync("Successfully created an incident. Stay tuned for updates on your incident.");
-                context.Wait(MessageReceived);
+                var incidentsService = new IncidentsService();
+                var createdIncidentId = await incidentsService.AddIncident(incident);
+
+                await context.PostAsync($"Successfully created an incident with ID: **{createdIncidentId}**. Stay tuned for updates on your incident.");
             }
             catch (FormCanceledException)
             {
@@ -112,7 +122,7 @@ namespace MyIncidentsBot.Dialogs
             }
             catch (Exception)
             {
-                await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
+                await context.PostAsync("I'm sorry but something happened. I couldn't create an incident.");
             }
             finally
             {
@@ -131,15 +141,16 @@ namespace MyIncidentsBot.Dialogs
                 incidentId = match.Value;
 
                 // Get incident
-                var incident = this.incidents.Where(i => i.ID.ToLower() == incidentId.ToLower()).FirstOrDefault();
+                var incidentsService = new IncidentsService();
+                var incident = await incidentsService.GetIncidentById(incidentId);
 
                 if (incident == null)
                 {
-                    await context.PostAsync($"No incident with Id '{incidentId}' has been found.");
+                    await context.PostAsync($"No incident with Id **{incidentId}** has been found.");
                 }
                 else
                 {
-                    await context.PostAsync($"Incident with Id '{incidentId}' is {incident.State}.");
+                    await context.PostAsync($"State of incident with Id **{incidentId}** is {incident.State}.");
                 }
             }
             else
@@ -148,8 +159,6 @@ namespace MyIncidentsBot.Dialogs
                 //res.Text = incidentId;
 
                 await base.MessageReceived(context, Awaitable.FromItem(context.Activity.AsMessageActivity()));
-
-                //await base.MessageReceived(context, );
             }
         }
     }
