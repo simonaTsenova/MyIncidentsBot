@@ -16,3 +16,10 @@ For this bot LUIS is trained to recognize four main intents:
 The user starts a dialog by typing some input, which triggers the bot to turn to LUIS to recognize user's intent. Once that has happened, a respective method in the dialog is called to take some action according to the desired intent. When LUIS cannot recognize intent it responds with an appropriate message.
 
 ## Samples
+The samples show some usage.
+The following sample shows requesting the state of incident with some ID.
+![alt text](https://github.com/simonaTsenova/MyIncidentsBot/blob/master/samples/sample1.png "Sample screenshot 1")
+The next screenshot shows few requests for getting latest incidents.
+![alt text](https://github.com/simonaTsenova/MyIncidentsBot/blob/master/samples/sample2.png "Sample screenshot 2")
+Third sample shows process of creating incident.
+![alt text](https://github.com/simonaTsenova/MyIncidentsBot/blob/master/samples/sample3.png "Sample screenshot 3")
