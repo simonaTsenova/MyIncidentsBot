@@ -2,11 +2,13 @@
 using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
+using Microsoft.Bot.Connector;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Services;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyIncidentsBot.Dialogs
@@ -16,10 +18,12 @@ namespace MyIncidentsBot.Dialogs
     public class LUISDialog : LuisDialog<object>
     {
         [LuisIntent("None")]
-        public async Task None(IDialogContext context, LuisResult result)
+        public async Task None(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
         {
-            await context.PostAsync("I'm sorry. I didn't understand you.");
-            context.Wait(MessageReceived);
+            var dialog = new CommonResponsesDialog();
+            dialog.InitialMessage = result.Query;
+
+            context.Call(dialog, OnCommonResponseHandled);
         }
 
         [LuisIntent("CreateIncident")]
@@ -42,6 +46,10 @@ namespace MyIncidentsBot.Dialogs
         [LuisIntent("GetAllIncidents")]
         public async Task GetAllIncidents(IDialogContext context, LuisResult result)
         {
+            await context.PostAsync("I'm sorry, but right now I cannot get all incidents.");
+            await context.PostAsync("You can ask me about the latest incidents if you want.");
+
+            context.Wait(MessageReceived);
         }
 
         [LuisIntent("GetLatestIncidents")]
@@ -103,6 +111,17 @@ namespace MyIncidentsBot.Dialogs
             }
 
             //context.Wait(MessageReceived);
+        }
+
+        private async Task OnCommonResponseHandled(IDialogContext context, IAwaitable<bool> result)
+        {
+            var isMessageHandled = await result;
+            if (!isMessageHandled)
+            {
+                await context.PostAsync("I'm sorry. I didn't understand you.");
+            }
+
+            context.Wait(MessageReceived);
         }
 
         private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<IncidentForm> result)
