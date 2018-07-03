@@ -98,11 +98,26 @@ namespace MyIncidentsBot.Dialogs
 
         private async Task OnCreateIncidentComplete(IDialogContext context, IAwaitable<Incident> result)
         {
-            // TODO Send created incident to service now
-            var incident = await result;
+            try
+            {
+                // TODO Send created incident to service now
+                var incident = await result;
 
-            await context.PostAsync("Successfully created an incident. Stay tuned for updates on your incident.");
-            context.Wait(MessageReceived);
+                await context.PostAsync("Successfully created an incident. Stay tuned for updates on your incident.");
+                context.Wait(MessageReceived);
+            }
+            catch (FormCanceledException)
+            {
+                await context.PostAsync("Don't want to create incident anymore? Ok.");
+            }
+            catch (Exception)
+            {
+                await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
+            }
+            finally
+            {
+                context.Wait(MessageReceived);
+            }
         }
 
         private async Task OnIncidentIdPromptComplete(IDialogContext context, IAwaitable<string> result)
