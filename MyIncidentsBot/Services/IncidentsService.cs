@@ -1,5 +1,7 @@
 ﻿using MyIncidentsBot.Helpers;
+using MyIncidentsBot.Helpers.Contracts;
 using MyIncidentsBot.Models;
+using MyIncidentsBot.Services.Contracts;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,13 +19,14 @@ namespace MyIncidentsBot.Services
         public List<Incident> Result { get; set; }
     }
 
-    public class IncidentsService
+    [Serializable]
+    public class IncidentsService : IIncidentsService
     {
-        private readonly ServiceNowClient client;
+        private readonly IRestClient client;
 
-        public IncidentsService()
+        public IncidentsService(IRestClient client)
         {
-            this.client = new ServiceNowClient();
+            this.client = client;
         }
 
         public async Task<string> AddIncident(IncidentForm incident)

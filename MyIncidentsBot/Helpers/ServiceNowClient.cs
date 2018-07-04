@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,7 +15,8 @@ namespace MyIncidentsBot.Helpers
         public string Refresh_Token { get; set; }
     }
 
-    public class ServiceNowClient
+    [Serializable]
+    public class ServiceNowClient : Contracts.IRestClient
     {
         private readonly string SERVICE_NOW_ENDPOINT;
         private readonly string GRANT_TYPE;
@@ -22,8 +24,6 @@ namespace MyIncidentsBot.Helpers
         private readonly string CLIENT_SECRET;
         private readonly string USERNAME;
         private readonly string PASSWORD;
-        private readonly RestClient client;
-        private readonly HttpClient httpClient;
 
         public ServiceNowClient()
         {
@@ -33,14 +33,12 @@ namespace MyIncidentsBot.Helpers
             this.CLIENT_SECRET = ConfigurationManager.AppSettings["ClientSecret"];
             this.USERNAME = ConfigurationManager.AppSettings["Username"];
             this.PASSWORD = ConfigurationManager.AppSettings["Password"];
-
-            this.client = new RestClient(SERVICE_NOW_ENDPOINT);
-            this.httpClient = new HttpClient() { BaseAddress = new Uri(SERVICE_NOW_ENDPOINT) };
         }
 
         public async Task<HttpResponseMessage> GET(string resource, IDictionary<string, string> parameters)
         {
-            var token = this.GetAccessToken();
+            var httpClient = new HttpClient() { BaseAddress = new Uri(SERVICE_NOW_ENDPOINT) };
+            var token = await this.GetAccessToken();
             httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 
             var withParams = resource + "?";
@@ -56,7 +54,8 @@ namespace MyIncidentsBot.Helpers
 
         public async Task<HttpResponseMessage> POST(string resource, object body)
         {
-            var token = this.GetAccessToken();
+            var httpClient = new HttpClient() { BaseAddress = new Uri(SERVICE_NOW_ENDPOINT) };
+            var token = await this.GetAccessToken();
             httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(
@@ -67,18 +66,22 @@ namespace MyIncidentsBot.Helpers
             return response;
         }
 
-        private string GetAccessToken()
+        private async Task<string> GetAccessToken()
         {
-            var request = new RestRequest(Constants.TOKEN_RESOURCE, Method.POST);
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddParameter("grant_type", GRANT_TYPE);
-            request.AddParameter("client_id", CLIENT_ID);
-            request.AddParameter("client_secret", CLIENT_SECRET);
-            request.AddParameter("username", USERNAME);
-            request.AddParameter("password", PASSWORD);
+            var httpClient = new HttpClient() { BaseAddress = new Uri(SERVICE_NOW_ENDPOINT) };
+            httpClient.DefaultRequestHeaders.Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
 
-            var response = this.client.Execute<TokenResponse>(request);
-            var access_token = response.Data.Access_Token;
+            var parameters = new Dictionary<string, string>();
+            parameters.Add("grant_type", GRANT_TYPE);
+            parameters.Add("client_id", CLIENT_ID);
+            parameters.Add("client_secret", CLIENT_SECRET);
+            parameters.Add("username", USERNAME);
+            parameters.Add("password", PASSWORD);
+
+            var response = await httpClient.PostAsync(Constants.TOKEN_RESOURCE, new FormUrlEncodedContent(parameters));
+            var responseString = await response.Content.ReadAsStringAsync();
+            var access_token = JsonConvert.DeserializeObject<TokenResponse>(responseString).Access_Token;
 
             return access_token;
         }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Autofac;
+using Autofac.Integration.WebApi;
+using MyIncidentsBot.App_Start;
+using System.Reflection;
 using System.Web.Http;
-using System.Web.Routing;
 
 namespace MyIncidentsBot
 {
@@ -12,6 +11,13 @@ namespace MyIncidentsBot
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new AutofacModule());
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
         }
     }
 }

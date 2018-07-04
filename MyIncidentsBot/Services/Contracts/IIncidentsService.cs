@@ -1,0 +1,16 @@
+﻿using MyIncidentsBot.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace MyIncidentsBot.Services.Contracts
+{
+    public interface IIncidentsService
+    {
+        Task<string> AddIncident(IncidentForm incident);
+
+        Task<IList<Incident>> GetLatestIncidents();
+
+        Task<Incident> GetIncidentById(string id);
+    }
+}

@@ -11,11 +11,18 @@ namespace MyIncidentsBot
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private readonly LUISDialog rootDialog;
+
+        public MessagesController(LUISDialog rootDialog)
+        {
+            this.rootDialog = rootDialog;
+        }
+
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new LUISDialog());
+                await Conversation.SendAsync(activity, () => this.rootDialog);
             }
             else
             {

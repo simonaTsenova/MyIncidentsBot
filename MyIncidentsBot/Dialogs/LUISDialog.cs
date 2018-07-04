@@ -6,6 +6,7 @@ using Microsoft.Bot.Connector;
 using MyIncidentsBot.Helpers;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Services;
+using MyIncidentsBot.Services.Contracts;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,13 +18,21 @@ namespace MyIncidentsBot.Dialogs
     [Serializable]
     public class LUISDialog : LuisDialog<object>
     {
+        private readonly IIncidentsService incidentsService;
+        private readonly CommonResponsesDialog commonResponsesDialog;
+
+        public LUISDialog(IIncidentsService incidentsService, CommonResponsesDialog commonResponsesDialog)
+        {
+            this.incidentsService = incidentsService;
+            this.commonResponsesDialog = commonResponsesDialog;
+        }
+
         [LuisIntent("None")]
         public async Task None(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
         {
-            var dialog = new CommonResponsesDialog();
-            dialog.InitialMessage = result.Query;
+            this.commonResponsesDialog.InitialMessage = result.Query;
 
-            context.Call(dialog, OnCommonResponseHandled);
+            context.Call(this.commonResponsesDialog, OnCommonResponseHandled);
         }
 
         [LuisIntent("CreateIncident")]
@@ -58,8 +67,8 @@ namespace MyIncidentsBot.Dialogs
             try
             {
                 string incidentsReply = string.Empty;
-                var incidentsService = new IncidentsService();
-                var incidents = await incidentsService.GetLatestIncidents();
+                
+                var incidents = await this.incidentsService.GetLatestIncidents();
                 var incidentsCount = incidents.Count;
                 if (incidentsCount > 0)
                 {
@@ -76,7 +85,7 @@ namespace MyIncidentsBot.Dialogs
                     await context.PostAsync("Sorry, didn't find any incidents.");
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
             }
@@ -104,8 +113,7 @@ namespace MyIncidentsBot.Dialogs
                 else
                 {
                     var incidentId = incidentIdEntity.Entity;
-                    var incidentsService = new IncidentsService();
-                    var incident = await incidentsService.GetIncidentById(incidentId);
+                    var incident = await this.incidentsService.GetIncidentById(incidentId);
 
                     if (incident == null)
                     {
@@ -141,8 +149,7 @@ namespace MyIncidentsBot.Dialogs
             {
                 var incident = await result;
 
-                var incidentsService = new IncidentsService();
-                var createdIncidentId = await incidentsService.AddIncident(incident);
+                var createdIncidentId = await this.incidentsService.AddIncident(incident);
 
                 await context.PostAsync($"Successfully created an incident with ID: **{createdIncidentId}**. Stay tuned for updates on your incident.");
             }
@@ -172,8 +179,7 @@ namespace MyIncidentsBot.Dialogs
                 {
                     var incidentId = match.Value;
 
-                    var incidentsService = new IncidentsService();
-                    var incident = await incidentsService.GetIncidentById(incidentId);
+                    var incident = await this.incidentsService.GetIncidentById(incidentId);
 
                     if (incident == null)
                     {
