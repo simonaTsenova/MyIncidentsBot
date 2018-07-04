@@ -3,17 +3,17 @@ using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
+using MyIncidentsBot.Helpers;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Services;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyIncidentsBot.Dialogs
 {
-    [LuisModel("8b1f49d2-67d0-4ce7-871c-87ce3bf46c38", "166d2616418f4c7cba18bac99764777a")]
+    [LuisModel(Constants.LUIS_MODEL_ID, Constants.LUIS_SUBSCRIPTION_KEY)]
     [Serializable]
     public class LUISDialog : LuisDialog<object>
     {
@@ -55,62 +55,73 @@ namespace MyIncidentsBot.Dialogs
         [LuisIntent("GetLatestIncidents")]
         public async Task GetLatestIncidents(IDialogContext context, LuisResult result)
         {
-            string incidentsReply = string.Empty;
-            var incidentsService = new IncidentsService();
-            var incidents = await incidentsService.GetLatestIncidents();
-            var incidentsCount = incidents.Count;
-            if (incidentsCount > 0)
+            try
             {
-                for (int i = 0; i < incidentsCount; i++)
+                string incidentsReply = string.Empty;
+                var incidentsService = new IncidentsService();
+                var incidents = await incidentsService.GetLatestIncidents();
+                var incidentsCount = incidents.Count;
+                if (incidentsCount > 0)
                 {
-                    incidentsReply += $"**{i+1}**: **ID**: {incidents[i].Number}, **DESCRIPTION**: {incidents[i].Short_Description}, **URGENCY**: {incidents[i].Urgency}, **STATE**: {incidents[i].State} \n";
-                }
+                    for (int i = 0; i < incidentsCount; i++)
+                    {
+                        incidentsReply += $"**{i + 1}**: **ID**: {incidents[i].Number}, **DESCRIPTION**: {incidents[i].Short_Description}, **URGENCY**: {incidents[i].Urgency}, **STATE**: {incidents[i].State} \n";
+                    }
 
-                await context.PostAsync("Here are latest incidents:");
-                await context.PostAsync(incidentsReply);
+                    await context.PostAsync("Here are latest incidents:");
+                    await context.PostAsync(incidentsReply);
+                }
+                else
+                {
+                    await context.PostAsync("Sorry, didn't find any incidents.");
+                }
             }
-            else
+            catch
             {
-                await context.PostAsync("Sorry, didn't find any incidents.");
+                await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
             }
-            
-            context.Wait(MessageReceived);
+            finally
+            {
+                context.Wait(MessageReceived);
+            }
         }
 
         [LuisIntent("GetIncidentState")]
         public async Task GetIncident(IDialogContext context, LuisResult result)
         {
-            var incidentId = string.Empty;
-            if (result.Entities.Count > 0)
+            try
             {
-                incidentId = result.Entities.FirstOrDefault(e => e.Type == "IncidentID").Entity;
-            }
+                var incidentIdEntity = result.Entities.FirstOrDefault(e => e.Type == "IncidentID");
 
-            if (string.IsNullOrEmpty(incidentId))
-            {
-                PromptDialog.Text(
-                    context: context,
-                    resume: OnIncidentIdPromptComplete,
-                    prompt: "What's the ID of the incident you want me to check?",
-                    retry: "Sorry, I didn't understant that. Please try again.");
-            }
-            else
-            {
-                // Get incident
-                var incidentsService = new IncidentsService();
-                var incident = await incidentsService.GetIncidentById(incidentId);
-
-                if (incident == null)
+                if (incidentIdEntity == null)
                 {
-                    await context.PostAsync($"No incident with Id **{incidentId}** has been found.");
+                    PromptDialog.Text(
+                        context: context,
+                        resume: OnIncidentIdPromptComplete,
+                        prompt: "What's the ID of the incident you want me to check?",
+                        retry: "Sorry, I didn't understant that. Please try again.");
                 }
                 else
                 {
-                    await context.PostAsync($"State of incident with Id **{incidentId}** is **{incident.State}**.");
+                    var incidentId = incidentIdEntity.Entity;
+                    var incidentsService = new IncidentsService();
+                    var incident = await incidentsService.GetIncidentById(incidentId);
+
+                    if (incident == null)
+                    {
+                        await context.PostAsync($"No incident with Id **{incidentId}** has been found.");
+                    }
+                    else
+                    {
+                        await context.PostAsync($"State of incident with Id **{incidentId}** is **{incident.State}**.");
+                    }
                 }
             }
-
-            //context.Wait(MessageReceived);
+            catch
+            {
+                await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
+                context.Wait(MessageReceived);
+            }
         }
 
         private async Task OnCommonResponseHandled(IDialogContext context, IAwaitable<bool> result)
@@ -151,33 +162,36 @@ namespace MyIncidentsBot.Dialogs
 
         private async Task OnIncidentIdPromptComplete(IDialogContext context, IAwaitable<string> result)
         {
-            var incidentId = await result;
-            var pattern = @"inc[0-9]{7}";
-            var regex = new Regex(pattern, RegexOptions.IgnoreCase);
-            var match = regex.Match(incidentId);
-            if (match.Success)
+            try
             {
-                incidentId = match.Value;
-
-                // Get incident
-                var incidentsService = new IncidentsService();
-                var incident = await incidentsService.GetIncidentById(incidentId);
-
-                if (incident == null)
+                var userResponse = await result;
+                var incidentIdPattern = @"inc[0-9]{7}";
+                var regex = new Regex(incidentIdPattern, RegexOptions.IgnoreCase);
+                var match = regex.Match(userResponse);
+                if (match.Success)
                 {
-                    await context.PostAsync($"No incident with Id **{incidentId}** has been found.");
+                    var incidentId = match.Value;
+
+                    var incidentsService = new IncidentsService();
+                    var incident = await incidentsService.GetIncidentById(incidentId);
+
+                    if (incident == null)
+                    {
+                        await context.PostAsync($"No incident with Id **{incidentId}** has been found.");
+                    }
+                    else
+                    {
+                        await context.PostAsync($"State of incident with Id **{incidentId}** is {incident.State}.");
+                    }
                 }
                 else
                 {
-                    await context.PostAsync($"State of incident with Id **{incidentId}** is {incident.State}.");
+                    await base.MessageReceived(context, Awaitable.FromItem(context.Activity.AsMessageActivity()));
                 }
             }
-            else
+            catch
             {
-                //IMessageActivity res = context.MakeMessage();
-                //res.Text = incidentId;
-
-                await base.MessageReceived(context, Awaitable.FromItem(context.Activity.AsMessageActivity()));
+                await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
             }
         }
     }
