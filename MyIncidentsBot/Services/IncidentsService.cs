@@ -1,6 +1,7 @@
 ﻿using MyIncidentsBot.Common;
 using MyIncidentsBot.Helpers.Contracts;
 using MyIncidentsBot.Models;
+using MyIncidentsBot.Models.Responses;
 using MyIncidentsBot.Services.Contracts;
 using Newtonsoft.Json;
 using System;
@@ -9,16 +10,6 @@ using System.Threading.Tasks;
 
 namespace MyIncidentsBot.Services
 {
-    public class IncidentResponse
-    {
-        public Incident Result { get; set; }
-    }
-
-    public class IncidentsCollectionResponse
-    {
-        public List<Incident> Result { get; set; }
-    }
-
     [Serializable]
     public class IncidentsService : IIncidentsService
     {

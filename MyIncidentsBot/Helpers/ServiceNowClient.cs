@@ -1,7 +1,7 @@
 ﻿using MyIncidentsBot.Common;
 using MyIncidentsBot.Common.Exceptions;
+using MyIncidentsBot.Models.Responses;
 using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,12 +11,6 @@ using System.Threading.Tasks;
 
 namespace MyIncidentsBot.Helpers
 {
-    public class TokenResponse
-    {
-        public string Access_Token { get; set; }
-        public string Refresh_Token { get; set; }
-    }
-
     [Serializable]
     public class ServiceNowClient : Contracts.IRestClient
     {
