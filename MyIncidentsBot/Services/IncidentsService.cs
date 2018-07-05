@@ -27,7 +27,6 @@ namespace MyIncidentsBot.Services
             var incidentObject = new
             {
                 short_description = incident.Description,
-                caller_id = "4e4be61bdb491300afbff3de3b961903",
                 urgency = ((int)incident.Urgency).ToString()
             };
 
