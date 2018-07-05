@@ -9,7 +9,7 @@ namespace MyIncidentsBot.Services.Contracts
     {
         Task<string> AddIncident(IncidentForm incident);
 
-        Task<IList<Incident>> GetLatestIncidents();
+        Task<IList<Incident>> GetLatestIncidents(string count);
 
         Task<Incident> GetIncidentById(string id);
     }

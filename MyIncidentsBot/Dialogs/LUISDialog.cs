@@ -64,12 +64,14 @@ namespace MyIncidentsBot.Dialogs
         {
             try
             {
-                string incidentsReply = string.Empty;
-                
-                var incidents = await this.incidentsService.GetLatestIncidents();
+                var numberEntity = result.Entities.FirstOrDefault(e => e.Type == "builtin.number");
+                var latestIncidentsCount = numberEntity != null ? numberEntity.Entity : Constants.LATEST_INCIDENTS_COUNT;
+
+                var incidents = await this.incidentsService.GetLatestIncidents(latestIncidentsCount);
                 var incidentsCount = incidents.Count;
                 if (incidentsCount > 0)
                 {
+                    string incidentsReply = string.Empty;
                     for (int i = 0; i < incidentsCount; i++)
                     {
                         incidentsReply += $"**{i + 1}**: **ID**: {incidents[i].Number}, **DESCRIPTION**: {incidents[i].Short_Description}, **URGENCY**: {incidents[i].Urgency}, **STATE**: {incidents[i].State} \n";

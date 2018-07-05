@@ -46,11 +46,11 @@ namespace MyIncidentsBot.Services
             }
         }
 
-        public async Task<IList<Incident>> GetLatestIncidents()
+        public async Task<IList<Incident>> GetLatestIncidents(string count)
         {
             var parameters = new Dictionary<string, string>();
             parameters.Add("sysparm_query", "ORDERBYDESCsys_created_on");
-            parameters.Add("sysparm_limit", Constants.LATEST_INCIDENTS_COUNT);
+            parameters.Add("sysparm_limit", count);
             parameters.Add("sysparm_fields", "short_description,number,state,urgency,sys_created_on");
 
             var response = await this.client.GET(Constants.INCIDENT_RESOURCE, parameters);
