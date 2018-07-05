@@ -1,5 +1,5 @@
-﻿using MyIncidentsBot.Models;
-using System;
+﻿using Microsoft.Bot.Builder.Dialogs;
+using MyIncidentsBot.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

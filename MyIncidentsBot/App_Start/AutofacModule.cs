@@ -18,6 +18,11 @@ namespace MyIncidentsBot.App_Start
                 .As<IIncidentsService>()
                 .InstancePerRequest();
 
+            builder.RegisterType<MetaMessagingService>()
+               .Keyed<IMetaMessagingService>(FiberModule.Key_DoNotSerialize)
+               .As<IMetaMessagingService>()
+               .InstancePerRequest();
+
             builder.RegisterType<ServiceNowClient>()
                 .Keyed<IRestClient>(FiberModule.Key_DoNotSerialize)
                 .As<IRestClient>()

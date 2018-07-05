@@ -136,9 +136,14 @@
     <Compile Include="Models\Enums\UrgencyType.cs" />
     <Compile Include="Models\Incident.cs" />
     <Compile Include="Models\IncidentForm.cs" />
+    <Compile Include="Models\Responses\IncidentResponse.cs" />
+    <Compile Include="Models\Responses\IncidentsCollectionResponse.cs" />
+    <Compile Include="Models\Responses\TokenResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Contracts\IIncidentsService.cs" />
+    <Compile Include="Services\Contracts\IMetaMessagingService.cs" />
     <Compile Include="Services\IncidentsService.cs" />
+    <Compile Include="Services\MetaMessagingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

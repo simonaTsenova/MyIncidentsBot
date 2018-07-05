@@ -188,7 +188,6 @@ namespace MyIncidentsBot.Dialogs
                 if (match.Success)
                 {
                     var incidentId = match.Value;
-
                     var incident = await this.incidentsService.GetIncidentById(incidentId);
 
                     if (incident == null)
@@ -205,7 +204,7 @@ namespace MyIncidentsBot.Dialogs
                     await base.MessageReceived(context, Awaitable.FromItem(context.Activity.AsMessageActivity()));
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
             }

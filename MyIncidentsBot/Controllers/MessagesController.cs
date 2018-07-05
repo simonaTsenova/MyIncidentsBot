@@ -5,6 +5,7 @@ using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using MyIncidentsBot.Dialogs;
+using MyIncidentsBot.Services.Contracts;
 
 namespace MyIncidentsBot
 {
@@ -12,16 +13,20 @@ namespace MyIncidentsBot
     public class MessagesController : ApiController
     {
         private readonly LUISDialog rootDialog;
+        private readonly IMetaMessagingService metaMessagingService;
 
-        public MessagesController(LUISDialog rootDialog)
+        public MessagesController(LUISDialog rootDialog, IMetaMessagingService metaMessagingService)
         {
             this.rootDialog = rootDialog;
+            this.metaMessagingService = metaMessagingService;
         }
 
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity.Type == ActivityTypes.Message)
             {
+                await this.metaMessagingService.SendTypingIndicator(activity);
+
                 await Conversation.SendAsync(activity, () => this.rootDialog);
             }
             else

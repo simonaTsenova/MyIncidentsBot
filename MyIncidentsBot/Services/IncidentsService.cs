@@ -1,4 +1,6 @@
-﻿using MyIncidentsBot.Common;
+﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Connector;
+using MyIncidentsBot.Common;
 using MyIncidentsBot.Helpers.Contracts;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Models.Responses;
@@ -34,7 +36,6 @@ namespace MyIncidentsBot.Services
 
             if (response.IsSuccessStatusCode)
             {
-                var serializer = new JsonSerializer();
                 var deserializedIncident = JsonConvert.DeserializeObject<IncidentResponse>(responseString);
 
                 return deserializedIncident.Result.Number;
@@ -85,6 +86,15 @@ namespace MyIncidentsBot.Services
             }
 
             return null;
+        }
+
+        public async Task SendTypingIndicator(IDialogContext context)
+        {
+            var activity = context.Activity as Activity;
+            var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+            Activity isTypingReply = activity.CreateReply("Typing ...");
+            isTypingReply.Type = ActivityTypes.Typing;
+            await connector.Conversations.ReplyToActivityAsync(isTypingReply);
         }
     }
 }
