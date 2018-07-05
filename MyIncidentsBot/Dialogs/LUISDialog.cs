@@ -3,9 +3,9 @@ using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
-using MyIncidentsBot.Helpers;
+using MyIncidentsBot.Common;
+using MyIncidentsBot.Common.Exceptions;
 using MyIncidentsBot.Models;
-using MyIncidentsBot.Services;
 using MyIncidentsBot.Services.Contracts;
 using System;
 using System.Linq;
@@ -30,9 +30,7 @@ namespace MyIncidentsBot.Dialogs
         [LuisIntent("None")]
         public async Task None(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
         {
-            this.commonResponsesDialog.InitialMessage = result.Query;
-
-            context.Call(this.commonResponsesDialog, OnCommonResponseHandled);
+            await context.Forward(this.commonResponsesDialog, OnCommonResponseHandled, await message);
         }
 
         [LuisIntent("CreateIncident")]
@@ -85,7 +83,11 @@ namespace MyIncidentsBot.Dialogs
                     await context.PostAsync("Sorry, didn't find any incidents.");
                 }
             }
-            catch (Exception ex)
+            catch (AuthenticationFailedException)
+            {
+                await context.PostAsync("I'm sorry but access to ServiceNow was denied. I couldn't get any incidents.");
+            }
+            catch (Exception)
             {
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
             }
@@ -125,6 +127,10 @@ namespace MyIncidentsBot.Dialogs
                     }
                 }
             }
+            catch (AuthenticationFailedException)
+            {
+                await context.PostAsync("I'm sorry but access to ServiceNow was denied. I couldn't get any incidents.");
+            }
             catch
             {
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
@@ -156,6 +162,10 @@ namespace MyIncidentsBot.Dialogs
             catch (FormCanceledException)
             {
                 await context.PostAsync("Don't want to create incident anymore? Ok.");
+            }
+            catch (AuthenticationFailedException)
+            {
+                await context.PostAsync("I'm sorry but access to ServiceNow was denied. I couldn't create an incident.");
             }
             catch (Exception)
             {

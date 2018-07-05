@@ -1,4 +1,4 @@
-﻿using MyIncidentsBot.Helpers;
+﻿using MyIncidentsBot.Common;
 using MyIncidentsBot.Helpers.Contracts;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Services.Contracts;

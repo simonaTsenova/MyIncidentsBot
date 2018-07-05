@@ -122,13 +122,14 @@
   <ItemGroup>
     <Compile Include="App_Start\AutofacModule.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\Exceptions\AuthenticationFailedException.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\CommonResponsesDialog.cs" />
     <Compile Include="Dialogs\LUISDialog.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="Common\Constants.cs" />
     <Compile Include="Helpers\Contracts\IRestClient.cs" />
     <Compile Include="Helpers\ServiceNowClient.cs" />
     <Compile Include="Models\Enums\StateType.cs" />

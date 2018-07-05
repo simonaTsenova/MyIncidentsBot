@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace MyIncidentsBot.Helpers
+namespace MyIncidentsBot.Common
 {
     public static class Constants
     {

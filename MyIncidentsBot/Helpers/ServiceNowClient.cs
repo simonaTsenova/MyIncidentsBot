@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using MyIncidentsBot.Common;
+using MyIncidentsBot.Common.Exceptions;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -82,6 +84,11 @@ namespace MyIncidentsBot.Helpers
             var response = await httpClient.PostAsync(Constants.TOKEN_RESOURCE, new FormUrlEncodedContent(parameters));
             var responseString = await response.Content.ReadAsStringAsync();
             var access_token = JsonConvert.DeserializeObject<TokenResponse>(responseString).Access_Token;
+
+            if (access_token == null)
+            {
+                throw new AuthenticationFailedException();
+            }
 
             return access_token;
         }
