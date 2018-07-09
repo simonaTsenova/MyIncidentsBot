@@ -1,21 +1,21 @@
 ﻿using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
-using MyIncidentsBot.Common;
-using MyIncidentsBot.Common.Exceptions;
-using MyIncidentsBot.Models;
-using MyIncidentsBot.Services.Contracts;
+using MSTeamsBot.Models;
+using MSTeamsBot.Common;
+using MSTeamsBot.Services.Contracts;
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Bot.Builder.FormFlow;
+using MSTeamsBot.Common.Exceptions;
+using System.Text.RegularExpressions;
 
-namespace MyIncidentsBot.Dialogs
+namespace MSTeamsBot.Dialogs
 {
-    [LuisModel(Constants.LUIS_MODEL_ID, Constants.LUIS_SUBSCRIPTION_KEY)]
     [Serializable]
+    [LuisModel(Constants.LUIS_MODEL_ID, Constants.LUIS_SUBSCRIPTION_KEY)]
     public class LUISDialog : LuisDialog<object>
     {
         private readonly IIncidentsService incidentsService;

@@ -1,16 +1,14 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;
-using MyIncidentsBot.Common;
-using MyIncidentsBot.Helpers.Contracts;
-using MyIncidentsBot.Models;
-using MyIncidentsBot.Models.Responses;
-using MyIncidentsBot.Services.Contracts;
+﻿using MSTeamsBot.Helpers.Contracts;
+using MSTeamsBot.Models;
+using MSTeamsBot.Models.Responses;
+using MSTeamsBot.Services.Contracts;
+using MSTeamsBot.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyIncidentsBot.Services
+namespace MSTeamsBot.Services
 {
     [Serializable]
     public class IncidentsService : IIncidentsService
@@ -89,15 +87,6 @@ namespace MyIncidentsBot.Services
             }
 
             return null;
-        }
-
-        public async Task SendTypingIndicator(IDialogContext context)
-        {
-            var activity = context.Activity as Activity;
-            var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            Activity isTypingReply = activity.CreateReply("Typing ...");
-            isTypingReply.Type = ActivityTypes.Typing;
-            await connector.Conversations.ReplyToActivityAsync(isTypingReply);
         }
     }
 }
