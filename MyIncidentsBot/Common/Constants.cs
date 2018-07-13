@@ -9,5 +9,12 @@ namespace MyIncidentsBot.Common
         public const string TOKEN_RESOURCE = "oauth_token.do";
         public const string INCIDENT_RESOURCE = "api/now/table/incident";
         public const  string LATEST_INCIDENTS_COUNT = "20";
+
+        public const string NONE_INTENT = "None";
+        public const string CREATE_INCIDENT_INTENT = "CreateIncident";
+        public const string GET_ALL_INCIDENTS_INTENT = "GetAllIncidents";
+        public const string GET_LATEST_INCIDENTS_INTENT = "GetLatestIncidents";
+        public const string GET_INCIDENT_STATE_INTENT = "GetIncidentState";
+        public const string HELP_INTENT = "Help";
     }
 }

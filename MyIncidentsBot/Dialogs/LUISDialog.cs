@@ -5,6 +5,7 @@ using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
 using MyIncidentsBot.Common;
 using MyIncidentsBot.Common.Exceptions;
+using MyIncidentsBot.Helpers;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Services.Contracts;
 using System;
@@ -27,13 +28,13 @@ namespace MyIncidentsBot.Dialogs
             this.commonResponsesDialog = commonResponsesDialog;
         }
 
-        [LuisIntent("None")]
+        [LuisIntent(Constants.NONE_INTENT)]
         public async Task None(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
         {
             await context.Forward(this.commonResponsesDialog, OnCommonResponseHandled, await message);
         }
 
-        [LuisIntent("CreateIncident")]
+        [LuisIntent(Constants.CREATE_INCIDENT_INTENT)]
         public async Task CreateIncident(IDialogContext context, LuisResult result)
         {
             try
@@ -50,7 +51,7 @@ namespace MyIncidentsBot.Dialogs
             }
         }
 
-        [LuisIntent("GetAllIncidents")]
+        [LuisIntent(Constants.GET_ALL_INCIDENTS_INTENT)]
         public async Task GetAllIncidents(IDialogContext context, LuisResult result)
         {
             await context.PostAsync("I'm sorry, but right now I cannot get all incidents.");
@@ -59,13 +60,17 @@ namespace MyIncidentsBot.Dialogs
             context.Wait(MessageReceived);
         }
 
-        [LuisIntent("GetLatestIncidents")]
+        [LuisIntent(Constants.GET_LATEST_INCIDENTS_INTENT)]
         public async Task GetLatestIncidents(IDialogContext context, LuisResult result)
         {
             try
             {
                 var numberEntity = result.Entities.FirstOrDefault(e => e.Type == "builtin.number");
-                var latestIncidentsCount = numberEntity != null ? numberEntity.Entity : Constants.LATEST_INCIDENTS_COUNT;
+                var latestIncidentsCount = Constants.LATEST_INCIDENTS_COUNT;
+                if(numberEntity != null)
+                {
+                    latestIncidentsCount = this.ExtractIncidentsCountFromEntity(numberEntity.Entity);
+                }
 
                 var incidents = await this.incidentsService.GetLatestIncidents(latestIncidentsCount);
                 var incidentsCount = incidents.Count;
@@ -89,6 +94,10 @@ namespace MyIncidentsBot.Dialogs
             {
                 await context.PostAsync("I'm sorry but access to ServiceNow was denied. I couldn't get any incidents.");
             }
+            catch (ArgumentException)
+            {
+                await context.PostAsync("I'm sorry but you didn't provide valid number. I couldn't get any incidents.");
+            }
             catch (Exception)
             {
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
@@ -99,7 +108,7 @@ namespace MyIncidentsBot.Dialogs
             }
         }
 
-        [LuisIntent("GetIncidentState")]
+        [LuisIntent(Constants.GET_INCIDENT_STATE_INTENT)]
         public async Task GetIncident(IDialogContext context, LuisResult result)
         {
             try
@@ -138,6 +147,13 @@ namespace MyIncidentsBot.Dialogs
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
                 context.Wait(MessageReceived);
             }
+        }
+
+        [LuisIntent(Constants.HELP_INTENT)]
+        public async Task Help(IDialogContext context, LuisResult result)
+        {
+            await context.PostAsync("Well, I can help you manage your incidents in Service Now.");
+            await context.PostAsync("I can create a new incident, show you the latest or check for the state of particular incident.");
         }
 
         private async Task OnCommonResponseHandled(IDialogContext context, IAwaitable<bool> result)
@@ -210,6 +226,27 @@ namespace MyIncidentsBot.Dialogs
             {
                 await context.PostAsync("I'm sorry but something happened. Please, try again later on.");
             }
+        }
+
+        private string ExtractIncidentsCountFromEntity(string entity)
+        {
+            var latestIncidentsCount = Constants.LATEST_INCIDENTS_COUNT;
+
+            if (Regex.IsMatch(entity, @"^\d+$"))
+            {
+                latestIncidentsCount = entity;
+            }
+            else
+            {
+                var convertedEntity = NumberConverter.ConvertWordToNumber(entity);
+
+                if (convertedEntity <= int.Parse(Constants.LATEST_INCIDENTS_COUNT))
+                {
+                    latestIncidentsCount = convertedEntity.ToString();
+                }
+            }
+
+            return latestIncidentsCount;
         }
     }
 }
