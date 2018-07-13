@@ -128,6 +128,7 @@
     </Compile>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Helpers\Contracts\IRestClient.cs" />
+    <Compile Include="Helpers\FormCustomizer.cs" />
     <Compile Include="Helpers\NumberConverter.cs" />
     <Compile Include="Helpers\ServiceNowClient.cs" />
     <Compile Include="Models\Enums\StateType.cs" />

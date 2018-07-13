@@ -1,4 +1,5 @@
 ﻿using Microsoft.Bot.Builder.FormFlow;
+using MyIncidentsBot.Helpers;
 using MyIncidentsBot.Models.Enums;
 using System;
 
@@ -12,11 +13,13 @@ namespace MyIncidentsBot.Models
 
         public static IForm<IncidentForm> BuildForm()
         {
-            return new FormBuilder<IncidentForm>()
+            return FormCustomizer.CreateCustomForm<IncidentForm>()
                     .Field(nameof(Urgency))
-                    .Field(nameof(Description))
-                    .Confirm("Do you want to create incident with DESCRIPTION: **{Description}** and URGENCY: **{Urgency}**?")
+                    .Field(nameof(Description), "Please, describe you problem in few words (shortly).")
+                    .Confirm("Are you sure you want to create incident with DESCRIPTION: **{Description}** and URGENCY: **{Urgency}**?")
                     .Build();
         }
+
+        
     }
 }

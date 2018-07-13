@@ -39,7 +39,8 @@ namespace MyIncidentsBot.Dialogs
         {
             try
             {
-                await context.PostAsync("Ok, you will need to provide some details to create an incident.");
+                await context.PostAsync("Ok, let's create an incident.");
+                await context.PostAsync("You'll need to provide some info.");
 
                 var incidentForm = (IDialog<IncidentForm>)FormDialog.FromForm(IncidentForm.BuildForm, FormOptions.PromptInStart);
                 context.Call(incidentForm, OnCreateIncidentComplete);
