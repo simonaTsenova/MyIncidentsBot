@@ -1,6 +1,4 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;
-using MyIncidentsBot.Common;
+﻿using MyIncidentsBot.Common;
 using MyIncidentsBot.Helpers.Contracts;
 using MyIncidentsBot.Models;
 using MyIncidentsBot.Models.Responses;
@@ -22,10 +20,11 @@ namespace MyIncidentsBot.Services
             this.client = client;
         }
 
-        public async Task<string> AddIncident(IncidentForm incident)
+        public async Task<string> AddIncident(IncidentForm incident, string callerEmail)
         {
             var incidentObject = new
             {
+                caller_id = callerEmail,
                 short_description = incident.Description,
                 urgency = ((int)incident.Urgency).ToString()
             };

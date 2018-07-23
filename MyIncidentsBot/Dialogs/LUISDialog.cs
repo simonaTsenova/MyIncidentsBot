@@ -3,6 +3,7 @@ using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
+using Microsoft.Bot.Connector.Teams;
 using MyIncidentsBot.Common;
 using MyIncidentsBot.Common.Exceptions;
 using MyIncidentsBot.Helpers;
@@ -153,8 +154,12 @@ namespace MyIncidentsBot.Dialogs
         [LuisIntent(Constants.HELP_INTENT)]
         public async Task Help(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("Well, I can help you manage your incidents in Service Now.");
-            await context.PostAsync("I can create a new incident, show you the latest or check for the state of particular incident.");
+            await context.PostAsync("I am here to help you manage your incidents in Service Now.");
+            await context.PostAsync(@"I can:
+                - show you the latest number of incidents 
+                - create new incidents
+                - check for the state of particular incident.");
+            await context.PostAsync("What can I do for you?");
         }
 
         private async Task OnCommonResponseHandled(IDialogContext context, IAwaitable<bool> result)
@@ -174,7 +179,11 @@ namespace MyIncidentsBot.Dialogs
             {
                 var incident = await result;
 
-                var createdIncidentId = await this.incidentsService.AddIncident(incident);
+                var connector = new ConnectorClient(new Uri(context.Activity.ServiceUrl));
+                var members = (await connector.Conversations.GetConversationMembersAsync(context.Activity.Conversation.Id)).AsTeamsChannelAccounts();
+                var currentUser = members.FirstOrDefault(m => m.Name.ToLower() != "bot");
+
+                var createdIncidentId = await this.incidentsService.AddIncident(incident, currentUser.Email);
 
                 await context.PostAsync($"Successfully created an incident with ID: **{createdIncidentId}**. Stay tuned for updates on your incident.");
             }

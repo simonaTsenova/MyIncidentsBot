@@ -7,7 +7,7 @@ namespace MyIncidentsBot.Services.Contracts
 {
     public interface IIncidentsService
     {
-        Task<string> AddIncident(IncidentForm incident);
+        Task<string> AddIncident(IncidentForm incident, string callerEmail);
 
         Task<IList<Incident>> GetLatestIncidents(string count);
 
